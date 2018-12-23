@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Entity
@@ -33,9 +35,48 @@ public class Cliente implements Serializable, Identifiable<Long> {
     @Column(nullable = false, length = 100)
     @NonFinal private String nome;
 
+    @NotNull(message = "O campo email é obrigatório!!!")
+    @Column(nullable = false, length = 30)
+    @NonFinal private String email;
+
+    @NotNull(message = "O campo cpf é obrigatório!!!")
+    @Column(nullable = false, length = 11)
+    @NonFinal private String cpf;
+
+    @NotNull(message = "O campo data de nascimento é obrigatório!!!")
+    @Column(nullable = false)
+    @NonFinal private Date dataNascimento;
+
+    @NotNull(message = "O campo email é obrigatório!!!")
+    @Column(nullable = false, length = 30)
+    @NonFinal private String rua;
+
+    @NotNull(message = "O campo cidade é obrigatório!!!")
+    @Column(nullable = false, length = 30)
+    @NonFinal private String cidade;
+
+    @NotNull(message = "O campo estado é obrigatório!!!")
+    @Size(min = 2,max = 2, message = "O campo estado deve ter entre {min} e {max} caracteres")
+    @Column(nullable = false, length = 2)
+    @NonFinal private String estado;
+
+    @NotNull(message = "O campo cep é obrigatório!!!")
+    @Size(min = 1,max = 8, message = "O campo cep deve ter entre {min} e {max} caracteres")
+    @Column(nullable = false, length = 8)
+    @NonFinal private int cep;
+
+
     @JsonIgnore
     @NotNull(message = "O campo produto é obrigatório!")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NonFinal private Produto produto;
 
+
+    public static Specification<Cliente> nomeContem(String nome) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.nome).as(String.class)), '%'+nome+'%');
+    }
+
+    public static Specification<Cliente> estadoIdIgual(Long produtoId) {
+        return (root, query, cb) -> cb.equal(root.get(Cliente_.produto).get(Produto_.id), produtoId);
+    }
 }
