@@ -4,6 +4,8 @@ package br.edu.unidavi.api.view;
 import br.edu.unidavi.api.domain.EntityNotFoundException;
 import br.edu.unidavi.api.domain.Produto;
 import br.edu.unidavi.api.domain.ProdutoRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +32,22 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 @ExposesResourceFor(Produto.class)
 @RequestMapping(value = "/produtos")
+@Api(value = "Produto", description = "Produto Controller")
 public class ProdutoController extends AbstractController<Long, Produto, ProdutoRepository> {
 
     @Autowired
     public ProdutoController(ProdutoRepository repository, ConversionService conversionService, PagedResourcesAssembler<Produto> pagedResourcesAssembler, ProdutoResourceAssembler assembler) {
         super(repository, conversionService, pagedResourcesAssembler,  assembler);
     }
+
+    @ApiOperation(value = "Busca todos os produtos")
     @RequestMapping(method = GET, produces = HAL_JSON_VALUE)
     @Override
     public ResponseEntity<PagedResources<Resource<Produto>>> findAll(Pageable pageable) {
         return super.findAll(pageable);
     }
 
+    @ApiOperation(value = "Busca produto por marca")
     @RequestMapping(method = GET, value = "/byMarca/{marca:\\w{2}}", produces = HAL_JSON_VALUE)
     public ResponseEntity<Resource<Produto>> findByMarca(@PathVariable String marca) {
         Produto produto = repository.findOne(where(marcaIgual(marca)));
@@ -49,6 +55,7 @@ public class ProdutoController extends AbstractController<Long, Produto, Produto
         throw new EntityNotFoundException(String.format("Marca %s não encontrada!", marca));
     }
 
+    @ApiOperation(value = "Busca produto por nome")
     @RequestMapping(method = GET, value = "/byNomeContendo/{nome:.+}", produces = HAL_JSON_VALUE)
     public ResponseEntity<Resources<Resource<Produto>>> findByNomeContendo(@PathVariable String nome) {
         return ok(new Resources<>(repository.findAll(where(nomeContem(nome))).stream()
@@ -56,6 +63,7 @@ public class ProdutoController extends AbstractController<Long, Produto, Produto
                 .collect(toList())));
     }
 
+    @ApiOperation(value = "Busca produto por cliente")
     @RequestMapping(method = GET, value = "/byClienteId/{clienteId}", produces = HAL_JSON_VALUE)
     public ResponseEntity<Resource<Produto>> findByClienteId(@PathVariable Long clienteId) {
         Produto produto = repository.findOne(where(clienteIdIgual(clienteId)));

@@ -27,7 +27,7 @@ public class Cliente implements Serializable, Identifiable<Long> {
     private static final byte serialVersionUID = 1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @NonFinal private Long id;
 
     @NotNull(message = "O campo nome é obrigatório!!!")
@@ -69,6 +69,18 @@ public class Cliente implements Serializable, Identifiable<Long> {
 
     public static Specification<Cliente> nomeContem(String nome) {
         return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.nome).as(String.class)), '%'+nome+'%');
+    }
+
+    public static Specification<Cliente> ruaContem(String rua) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.rua).as(String.class)), '%'+rua+'%');
+    }
+
+    public static Specification<Cliente> cidadeContem(String cidade) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.cidade).as(String.class)), '%'+cidade+'%');
+    }
+
+    public static Specification<Cliente> estadoContem(String estado) {
+        return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.estado).as(String.class)), '%'+estado+'%');
     }
 
     public static Specification<Cliente> produtoIdIgual(Long produtoId) {

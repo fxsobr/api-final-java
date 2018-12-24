@@ -29,7 +29,7 @@ public class Produto implements Serializable, Identifiable<Long> {
     private static final byte serialVersionUID = 1;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @NonFinal private Long id;
 
     @NotNull(message = "O campo nome é obrigatório!")
