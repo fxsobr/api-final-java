@@ -1,14 +1,16 @@
 package br.edu.unidavi.api.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.core.Relation;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.persistence.criteria.Join;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,12 +19,17 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
 
+@Entity
+@Value(staticConstructor = "of")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Relation(value = "produto", collectionRelation = "produtos")
 public class Produto implements Serializable, Identifiable<Long> {
 
     private static final byte serialVersionUID = 1;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonFinal private Long id;
 
     @NotNull(message = "O campo nome é obrigatório!")
@@ -46,7 +53,7 @@ public class Produto implements Serializable, Identifiable<Long> {
     @NonFinal private Double valor;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "produto")
     @NonFinal private List<Cliente> clientes = newLinkedList();
 
     public static Specification<Produto> nomeContem(String nome) {

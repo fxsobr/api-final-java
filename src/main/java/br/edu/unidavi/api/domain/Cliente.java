@@ -27,7 +27,7 @@ public class Cliente implements Serializable, Identifiable<Long> {
     private static final byte serialVersionUID = 1;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NonFinal private Long id;
 
     @NotNull(message = "O campo nome é obrigatório!!!")
@@ -43,10 +43,6 @@ public class Cliente implements Serializable, Identifiable<Long> {
     @Column(nullable = false, length = 11)
     @NonFinal private String cpf;
 
-    @NotNull(message = "O campo data de nascimento é obrigatório!!!")
-    @Column(nullable = false)
-    @NonFinal private Date dataNascimento;
-
     @NotNull(message = "O campo email é obrigatório!!!")
     @Column(nullable = false, length = 30)
     @NonFinal private String rua;
@@ -61,7 +57,6 @@ public class Cliente implements Serializable, Identifiable<Long> {
     @NonFinal private String estado;
 
     @NotNull(message = "O campo cep é obrigatório!!!")
-    @Size(min = 1,max = 8, message = "O campo cep deve ter entre {min} e {max} caracteres")
     @Column(nullable = false, length = 8)
     @NonFinal private int cep;
 
@@ -76,7 +71,7 @@ public class Cliente implements Serializable, Identifiable<Long> {
         return (root, query, cb) -> cb.like(cb.lower(root.get(Cliente_.nome).as(String.class)), '%'+nome+'%');
     }
 
-    public static Specification<Cliente> estadoIdIgual(Long produtoId) {
+    public static Specification<Cliente> produtoIdIgual(Long produtoId) {
         return (root, query, cb) -> cb.equal(root.get(Cliente_.produto).get(Produto_.id), produtoId);
     }
 }
